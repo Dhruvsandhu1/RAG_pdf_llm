@@ -63,7 +63,7 @@ if uploaded_documents:
 
     #Storing final product of applying the embedder pattern to the chunks of documents
     #and storing it in vector db
-    vector_store=Chroma.from_documents(documents=chunks3,embedding=embeddings)
+    vector_store=FAISS.from_documents(documents=chunks3,embedding=embeddings)
 
     #Making the vector as a retreival class
     retriever=vector_store.as_retriever()
