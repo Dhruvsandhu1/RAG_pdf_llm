@@ -1,9 +1,9 @@
-
 #Importing neccesary libraries
 import streamlit as st
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.vectorstores import FAISS
+from langchain.retrievers import BM25Retriever,EnsembleRetriever
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -66,7 +66,11 @@ if uploaded_documents:
     vector_store=FAISS.from_documents(documents=chunks3,embedding=embeddings)
 
     #Making the vector as a retreival class
-    retriever=vector_store.as_retriever()
+    faiss_semantic_retriever=vector_store.as_retriever(search_kwargs={"k":5})
+    bm25_retriever = BM25Retriever.from_documents(documents=chunks3)
+    bm25_retriever.k=5
+    retriever = EnsembleRetriever(retrievers=[bm25_retriever,faiss_semantic_retriever],
+                                       weights=[0.5,0.5])
 
     #This system prompt is designed such that we get a standalone question without question
     #being referenced in the past conversation
