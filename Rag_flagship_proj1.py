@@ -56,7 +56,7 @@ if uploaded_documents:
     #Creating the chunks of the document 
     # text_splitter1=RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=20)
     # text_splitter2=RecursiveCharacterTextSplitter(chunk_size=500,chunk_overlap=75)
-    text_splitter3=RecursiveCharacterTextSplitter(chunk_size=5000,chunk_overlap=1000)
+    text_splitter3=RecursiveCharacterTextSplitter(chunk_size=3800,chunk_overlap=1000)
     # chunks1=text_splitter1.split_documents(documents)
     # chunks2=text_splitter2.split_documents(documents)
     chunks3=text_splitter3.split_documents(documents) 
@@ -66,9 +66,8 @@ if uploaded_documents:
     vector_store=FAISS.from_documents(documents=chunks3,embedding=embeddings)
 
     #Making the vector as a retreival class
-    faiss_semantic_retriever=vector_store.as_retriever(search_kwargs={"k":5})
+    faiss_semantic_retriever=vector_store.as_retriever()
     bm25_retriever = BM25Retriever.from_documents(documents=chunks3)
-    bm25_retriever.k=5
     retriever = EnsembleRetriever(retrievers=[bm25_retriever,faiss_semantic_retriever],
                                        weights=[0.5,0.5])
 
